@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "604879843138",
+    "project_id": "dusk-delivers",
+    "storage_bucket": "dusk-delivers.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604879843138:android:9bfb25f90f1cd0dd6fa2db",
+        "android_client_info": {
+          "package_name": "com.example.dusk_delivers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjfZbcR3EX4W7jmw3XLqftvU-320ulFOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
