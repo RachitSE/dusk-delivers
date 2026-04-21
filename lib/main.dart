@@ -9,11 +9,17 @@ import 'core/providers/auth_provider.dart';
 import 'features/auth/splash_screen.dart';
 
 void main() async {
+  // Ensures the Flutter framework is ready before calling native code
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    // Initialize Firebase using your generated configuration
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint("Firebase Initialization Error: $e");
+  }
 
   runApp(
     MultiProvider(
