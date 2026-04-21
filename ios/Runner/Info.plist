@@ -3,10 +3,13 @@
 <plist version="1.0">
 <dict>
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Dusk Delivers needs your location to show nearby restaurants and track your delivery to your hostel.</string>
+<string>We need your location to deliver food to your hostel at UPES.</string>
 
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>We need your location to provide real-time updates on your food delivery even when the app is in the background.</string>
+<string>We need your location to provide live updates on your delivery person's progress.</string>
+
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We need your location to track your order even if the screen is off.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

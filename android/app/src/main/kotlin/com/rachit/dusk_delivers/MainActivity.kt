@@ -1,4 +1,4 @@
-package com.example.dusk_delivers
+package com.rachit.duskdelivers
 
 import io.flutter.embedding.android.FlutterActivity
 
