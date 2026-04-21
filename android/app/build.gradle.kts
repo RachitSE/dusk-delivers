@@ -9,7 +9,8 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dusk_delivers"
+    // UPDATED: Matches your unique package name
+    namespace = "com.rachit.duskdelivers"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -23,10 +24,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.dusk_delivers"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // UPDATED: Your unique Application ID for Play Store
+        applicationId = "com.rachit.duskdelivers"
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

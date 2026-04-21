@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:604879843138:android:9bfb25f90f1cd0dd6fa2db",
+        "mobilesdk_app_id": "1:604879843138:android:35b6e85ca12fd3606fa2db",
         "android_client_info": {
-          "package_name": "com.example.dusk_delivers"
+          "package_name": "com.rachit.duskdelivers"
         }
       },
       "oauth_client": [],

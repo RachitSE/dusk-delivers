@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDjfZbcR3EX4W7jmw3XLqftvU-320ulFOg',
-    appId: '1:604879843138:android:9bfb25f90f1cd0dd6fa2db',
+    appId: '1:604879843138:android:35b6e85ca12fd3606fa2db',
     messagingSenderId: '604879843138',
     projectId: 'dusk-delivers',
     storageBucket: 'dusk-delivers.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAvTACwJpng1zczNIWlyER4b2PowNjqxV8',
-    appId: '1:604879843138:ios:f11af48b51950fa36fa2db',
+    appId: '1:604879843138:ios:5436c2fe8e538c3d6fa2db',
     messagingSenderId: '604879843138',
     projectId: 'dusk-delivers',
     storageBucket: 'dusk-delivers.firebasestorage.app',
-    iosBundleId: 'com.example.duskDelivers',
+    iosBundleId: 'com.rachit.duskdelivers',
   );
+
 }
