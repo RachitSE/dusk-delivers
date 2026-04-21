@@ -1,12 +1,15 @@
-platform :ios, '15.0' # <--- This is the magic line
+# 1. This line tells the Podfile where to find Flutter's helper functions
+load File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'podhelper.rb')
 
-import_with_parent('../../node_modules/expo-modules-autolink/scripts/ios/autolinking_manager.rb') if File.exist?('../../node_modules/expo-modules-autolink/scripts/ios/autolinking_manager.rb')
+platform :ios, '15.0'
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # 2. This command actually installs your plugins (Firebase, etc.)
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
   target 'RunnerTests' do
     inherit! :search_paths
   end
@@ -15,8 +18,9 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+
+    # 3. This ensures every sub-library also targets iOS 15.0
     target.build_configurations.each do |config|
-      # This ensures every pod also uses iOS 15.0
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     end
   end
