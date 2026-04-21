@@ -1,5 +1,8 @@
-# 1. This line tells the Podfile where to find Flutter's helper functions
-load File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'podhelper.rb')
+# 1. Dynamically find the Flutter SDK path
+flutter_root = ENV['FLUTTER_ROOT'] || File.expand_path(File.join('..', '..'), __FILE__)
+
+# 2. Load the helper directly from the SDK
+load File.join(flutter_root, 'packages', 'flutter_tools', 'bin', 'podhelper.rb')
 
 platform :ios, '15.0'
 
@@ -7,7 +10,7 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # 2. This command actually installs your plugins (Firebase, etc.)
+  # 3. Standard Flutter pod installation
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
   target 'RunnerTests' do
@@ -19,7 +22,7 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
-    # 3. This ensures every sub-library also targets iOS 15.0
+    # Ensure all targets match our iOS 15.0 requirement
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
     end
