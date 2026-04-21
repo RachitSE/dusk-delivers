@@ -2,10 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart'; // Added for branch detection
 import '../../core/theme/theme.dart';
 import '../../core/providers/cart_provider.dart';
 import '../../core/providers/order_provider.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../core/services/routing_service.dart'; // Added for branch detection
 import '../orders/order_tracking_screen.dart';
 import '../auth/phone_auth_screen.dart';
 
@@ -275,23 +277,37 @@ class CartScreen extends StatelessWidget {
                         return;
                       }
 
-                      // FIX: Get current user's phone
+                      // 1. Get current branch using user's saved location
+                      final StoreBranch currentBranch = StoreRoutingService.getFulfillmentBranch(
+                          Position(
+                            latitude: auth.currentUser!.lat ?? 30.3708,
+                            longitude: auth.currentUser!.lng ?? 77.9748,
+                            timestamp: DateTime.now(), accuracy: 0, altitude: 0,
+                            heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0,
+                          )
+                      );
+
+                      // Convert enum to string: "Bidholi" or "Pondha"
+                      final String branchName = currentBranch == StoreBranch.bidholi ? "Bidholi" : "Pondha";
+
                       final userPhone = auth.currentUser!.phone;
 
-                      // FIX: Pass userPhone to OrderItem constructor
+                      // 2. Create local object for navigation
                       final newOrder = OrderItem(
                         id: DateTime.now().millisecondsSinceEpoch.toString(),
                         amount: total,
                         dateTime: DateTime.now(),
                         products: cart.items.values.toList(),
                         userPhone: userPhone,
+                        branch: branchName, // Passed branch
                       );
 
-                      // FIX: Pass userPhone to addOrder function
+                      // 3. Call addOrder with the branch name
                       await Provider.of<OrderProvider>(context, listen: false).addOrder(
                         cart.items.values.toList(),
                         total,
                         userPhone,
+                        branchName, // Passed branch
                       );
 
                       cart.clear();

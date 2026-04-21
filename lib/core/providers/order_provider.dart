@@ -10,7 +10,9 @@ class OrderItem {
   final List<CartItem> products;
   final DateTime dateTime;
   final String firestoreId;
-  final String userPhone; // NEW: To link order to user
+  final String userPhone;
+  final String branch; // NEW
+  final String status; // NEW (Replaces the timer-only logic)
 
   OrderItem({
     required this.id,
@@ -18,27 +20,25 @@ class OrderItem {
     required this.products,
     required this.dateTime,
     required this.userPhone,
+    required this.branch,
+    this.status = 'Pending',
     this.firestoreId = '',
   });
 
+  // Keep your remainingSeconds logic for the UI progress bars
   int get remainingSeconds {
     final elapsed = DateTime.now().difference(dateTime).inSeconds;
     final remaining = 1200 - elapsed;
     return remaining > 0 ? remaining : 0;
   }
 
-  String get status {
-    final rem = remainingSeconds;
-    if (rem == 0) return 'Delivered';
-    if (rem < 600) return 'On the Way';
-    return 'Cooking';
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'amount': amount,
-      'userPhone': userPhone, // SECURE: Saves who ordered this
+      'userPhone': userPhone,
+      'branch': branch,
+      'status': status,
       'dateTime': dateTime.toIso8601String(),
       'products': products.map((p) => {
         'menuItemId': p.menuItem.id,
@@ -62,7 +62,7 @@ class OrderItem {
           description: '',
           price: p['price'],
           category: '',
-          imageUrl: p['imageUrl'],
+          imageUrl: p['imageUrl'] ?? '',
           calories: 0,
           protein: 0,
         ),
@@ -74,6 +74,8 @@ class OrderItem {
       firestoreId: doc.id,
       id: data['id'],
       userPhone: data['userPhone'] ?? '',
+      branch: data['branch'] ?? 'Bidholi',
+      status: data['status'] ?? 'Pending',
       amount: data['amount'],
       dateTime: DateTime.parse(data['dateTime']),
       products: products,
@@ -82,15 +84,17 @@ class OrderItem {
 }
 
 class OrderProvider with ChangeNotifier {
-  List<OrderItem> _orders = [];
+  List<OrderItem> _orders = []; // Kept original name
   Timer? _timer;
   StreamSubscription? _orderSubscription;
   FirebaseFirestore get _db => FirebaseFirestore.instance;
-  List<OrderItem> get orders => _orders;
 
+  List<OrderItem> get orders => _orders; // Kept original name
+
+  // Kept original name, updated logic to use status
   OrderItem? get activeOrder {
     try {
-      return _orders.firstWhere((o) => o.remainingSeconds > 0);
+      return _orders.firstWhere((o) => o.status != 'Delivered');
     } catch (e) {
       return null;
     }
@@ -98,30 +102,42 @@ class OrderProvider with ChangeNotifier {
 
   OrderProvider() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      // Keep the timer for UI countdowns
       if (activeOrder != null) notifyListeners();
     });
   }
 
-  // NEW: Call this when user logs in to start a private listener
-  void startOrderListener(String phone) {
+  // UPDATED: Added an isAdmin toggle so you can use the same listener
+  void startOrderListener(String phone, {bool isAdmin = false}) {
     _orderSubscription?.cancel();
-    _orderSubscription = _db.collection('orders')
-        .where('userPhone', isEqualTo: phone) // PRIVACY FIX: Only my orders
-        .orderBy('dateTime', descending: true)
-        .snapshots()
-        .listen((snapshot) {
+
+    Query query = _db.collection('orders').orderBy('dateTime', descending: true);
+
+    // If not admin, filter by phone. If admin, get everything.
+    if (!isAdmin) {
+      query = query.where('userPhone', isEqualTo: phone);
+    }
+
+    _orderSubscription = query.snapshots().listen((snapshot) {
       _orders = snapshot.docs.map((doc) => OrderItem.fromFirestore(doc)).toList();
       notifyListeners();
     });
   }
 
-  Future<void> addOrder(List<CartItem> cartProducts, int total, String phone) async {
+  // NEW: Acceptance Logic for Kitchen
+  Future<void> updateStatus(String docId, String newStatus) async {
+    await _db.collection('orders').doc(docId).update({'status': newStatus});
+  }
+
+  // UPDATED: Added branch parameter
+  Future<void> addOrder(List<CartItem> cartProducts, int total, String phone, String branch) async {
     final newOrder = OrderItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       amount: total,
       dateTime: DateTime.now(),
       products: cartProducts,
       userPhone: phone,
+      branch: branch,
     );
 
     await _db.collection('orders').add(newOrder.toMap());
